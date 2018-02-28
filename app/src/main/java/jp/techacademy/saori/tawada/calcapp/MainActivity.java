@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.TextView;
+import java.math.BigDecimal;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -35,23 +37,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         EditText editText1 = (EditText) findViewById(R.id.editText1);
         EditText editText2 = (EditText) findViewById(R.id.editText2);
 
-        double x = Double.parseDouble(editText1.getText().toString());
-        double y = Double.parseDouble(editText2.getText().toString());
+        try{
+            BigDecimal x = new BigDecimal(editText1.getText().toString());
+            BigDecimal y = new BigDecimal(editText2.getText().toString());
+            BigDecimal a;
 
-        Intent intent = new Intent(this, SecondActivity.class);
-        if (v.getId() == R.id.button1) {
-            double a = x + y;
-            intent.putExtra("VALUE1", a);
-        } else if (v.getId() == R.id.button2) {
-            double b = x - y;
-            intent.putExtra("VALUE2", b);
-        } else if (v.getId() == R.id.button3) {
-            double c = x * y;
-            intent.putExtra("VALUE3", c);
-        } else if (v.getId() == R.id.button4) {
-            double d = x / y;
-            intent.putExtra("VALUE4", d);
+            Intent intent = new Intent(this, SecondActivity.class);
+
+                if (v.getId() == R.id.button1) {
+                    a = x.add(y);
+                    intent.putExtra("VALUE1", a);
+                } else if (v.getId() == R.id.button2) {
+                    a = x.subtract(y);
+                    intent.putExtra("VALUE1", a);
+                } else if (v.getId() == R.id.button3) {
+                    a = x.multiply(y);
+                    intent.putExtra("VALUE1", a);
+                } else if (v.getId() == R.id.button4) {
+                    if (y.compareTo(BigDecimal.ZERO) == 0) {
+                        Toast ts1 = Toast.makeText(this, "0では割れません", Toast.LENGTH_LONG);
+                        ts1.show();
+                        return;
+                    }
+                    a = x.divide(y,2,BigDecimal.ROUND_HALF_UP);
+                    intent.putExtra("VALUE1", a);
+                }
+
+                startActivity(intent);
+
+        } catch (Exception e) {
+                Toast ts2 = Toast.makeText(this, "数値を入力してください", Toast.LENGTH_LONG);
+                ts2.show();
         }
-        startActivity(intent);
     }
 }
